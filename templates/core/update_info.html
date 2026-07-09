@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+    <form method="POST" action="{% url 'core:update_info' %}">
+    {% csrf_token %}
+ {{ form.as_p }}
+    <button type="submit">Update user</button>
+
+    <br> <br>
+    {{ shipping_form.as_p }}
+</form>
+
+
+{% endblock %}

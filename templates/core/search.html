@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container py-5">
+  <div class="card shadow-sm border-0">
+    <div class="card-header bg-dark text-white fs-5 fw-semibold">
+      Search products
+    </div>
+    <div class="card-body p-4">
+      <form method="POST" action="{% url 'core:search' %}">
+        {% csrf_token %}
+        <div class="input-group mb-3">
+          <input type="text" class="form-control form-control-lg" placeholder="Search for products" name="searched">
+          <button type="submit" class="btn btn-dark px-4">
+            <i class="bi bi-search me-1"></i> Search products
+          </button>
+        </div>
+      </form>
+
+      {% if searched %}
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mt-2">
+          {% for product in searched %}
+            {% if product.is_Sale %}
+              <div class="col mb-5">
+                <div class="card h-100 shadow-sm">
+                  <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem;right:0.5rem">Sales</div>
+                  <img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.name }}" style="height:200px;object-fit:cover;" />
+                  <div class="card-body p-4">
+                    <div class="text-center">
+                      <h5 class="fw-bolder">{{ product.name }}</h5>
+                      <div class="d-flex justify-content-center small text-warning mb-2">
+                        <div class="bi-star-fill"></div>
+                        <div class="bi-star-fill"></div>
+                        <div class="bi-star-fill"></div>
+                        <div class="bi-star-fill"></div>
+                        <div class="bi-star-fill"></div>
+                      </div>
+                      <strike>${{ product.price }}</strike>
+                      ${{ product.sale_price }}
+                      <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                        <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{% url 'core:product' product.name %}">View options</a></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                    <div class="text-center">
+                      <a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% else %}
+              <div class="col mb-5">
+                <div class="card h-100 shadow-sm">
+                  <img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.name }}" style="height:200px;object-fit:cover;" />
+                  <div class="card-body p-4">
+                    <div class="text-center">
+                      <h5 class="fw-bolder">{{ product.name }}</h5>
+                      ${{ product.price }}
+                    </div>
+                  </div>
+                  <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                    <div class="text-center">
+                      <a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a>
+                    </div>
+                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                      <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{% url 'core:product' product.name %}">View options</a></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container py-5">
+
+    <h2 class="text-center mb-4">Orders Waiting to Ship</h2>
+
+    {% for orders in order %}
+
+    <div class="card shadow mb-4">
+        <div class="card-header bg-dark text-white">
+            <strong>Order #{{ orders.id }}</strong>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row mb-4">
+
+                <div class="col-md-3">
+                    <h6>Order ID</h6>
+                  <a href="{% url 'orders' orders.id %}">  <p>{{ orders.id }}</p> </a>
+                </div>
+
+                <div class="col-md-3">
+                    <h6>Price</h6>
+                    <p>${{ orders.amount_paid }}</p>
+                </div>
+
+                <div class="col-md-3">
+                    <h6>Customer Email</h6>
+                    <p>{{ orders.email }}</p>
+                </div>
+
+                <div class="col-md-3">
+                    <h6>Date Ordered</h6>
+                    <p>{{ orders.date_ordered }}</p>
+                </div>
+
+            </div>
+
+            <h5>Products</h5>
+
+            <div class="row">
+
+                {% for item in orders.orderitem_set.all %}
+
+                <div class="col-md-4 mb-3">
+
+                    <div class="card h-100">
+
+                        <img src="{{ item.product.image.url }}"
+                             class="card-img-top"
+                             style="height:180px; object-fit:cover;">
+
+                        <div class="card-body text-center">
+
+                            <h6>{{ item.product.name }}</h6>
+
+                            <p class="mb-1">
+                                Quantity: {{ item.quantity }}
+                            </p>
+                             <p class="mb-1">
+                                Product id: {{ item.id }}
+                            </p>
+
+                            <p class="fw-bold text-success">
+                                ${{ item.price }}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% empty %}
+
+                <p>No products in this order.</p>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

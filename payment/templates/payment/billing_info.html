@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- Hero Header -->
+<header class="shop-hero py-5">
+    <div class="container px-4 px-lg-5 my-4">
+        <div class="text-center">
+            <span class="hero-eyebrow">Billing info</span>
+            <h1 class="hero-title">Your Bag</h1>
+            <p class="hero-sub">Review your items before checkout</p>
+        </div>
+    </div>
+</header>
+
+<div class="container checkout-wrap">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+
+
+            <div class="card checkout-card">
+                <div class="card-header">
+                    Shipping info
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{% url 'process_order' %}">
+                        {% csrf_token %}
+                        {{ billing_form.as_p }}
+                        <button type="submit" class="btn-checkout">Place order</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    /* ── Tokens ─────────────────────────────────────── */
+    :root {
+        --clr-bg:        #F8F7F4;
+        --clr-hero-from: #1a1a2e;
+        --clr-hero-to:   #16213e;
+        --clr-accent:    #e63946;
+        --clr-surface:   #ffffff;
+        --clr-border:    #e8e8e8;
+        --clr-text:      #1c1c1e;
+        --clr-muted:     #6e6e73;
+        --clr-star:      #f4a261;
+
+        --radius-card:   14px;
+        --shadow-card:   0 2px 12px rgba(0,0,0,.07);
+        --shadow-hover:  0 8px 32px rgba(0,0,0,.14);
+        --trans:         0.22s ease;
+    }
+
+    body { background: var(--clr-bg); }
+
+    /* ── Hero ───────────────────────────────────────── */
+    .shop-hero {
+        background: linear-gradient(135deg, var(--clr-hero-from), var(--clr-hero-to));
+        border-bottom: 3px solid var(--clr-accent);
+    }
+    .hero-eyebrow {
+        display: inline-block;
+        font-size: .72rem;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,.5);
+        margin-bottom: .75rem;
+    }
+    .hero-title {
+        font-size: clamp(2rem, 5vw, 3.2rem);
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: .4rem;
+        line-height: 1.1;
+    }
+    .hero-sub {
+        color: rgba(255,255,255,.6);
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    /* ── Checkout layout ─────────────────────────────── */
+    .checkout-wrap {
+        padding-top: 2.5rem;
+        padding-bottom: 4rem;
+    }
+
+    .checkout-card {
+        background: var(--clr-surface);
+        border: 1px solid var(--clr-border);
+        border-radius: var(--radius-card);
+        box-shadow: var(--shadow-card);
+        overflow: hidden;
+        margin-bottom: 1.75rem;
+        transition: box-shadow var(--trans);
+    }
+    .checkout-card:hover { box-shadow: var(--shadow-hover); }
+
+    .checkout-card .card-header {
+        background: var(--clr-surface);
+        border-bottom: 2px solid var(--clr-border);
+        padding: 1.1rem 1.4rem;
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--clr-text);
+    }
+
+    .checkout-card .card-body {
+        padding: 1.4rem;
+    }
+
+    /* ── Django form defaults (as_p) restyled ────────── */
+    .checkout-card .card-body p {
+        margin-bottom: 1.1rem;
+    }
+    .checkout-card .card-body label {
+        display: block;
+        font-size: .78rem;
+        font-weight: 700;
+        letter-spacing: .03em;
+        text-transform: uppercase;
+        color: var(--clr-muted);
+        margin-bottom: .4rem;
+    }
+    .checkout-card .card-body input[type="text"],
+    .checkout-card .card-body input[type="email"],
+    .checkout-card .card-body input[type="tel"],
+    .checkout-card .card-body input[type="number"],
+    .checkout-card .card-body input[type="password"],
+    .checkout-card .card-body select,
+    .checkout-card .card-body textarea {
+        width: 100%;
+        padding: .65rem .85rem;
+        font-size: .92rem;
+        color: var(--clr-text);
+        background: var(--clr-bg);
+        border: 1.5px solid var(--clr-border);
+        border-radius: 8px;
+        transition: border-color var(--trans), background var(--trans);
+    }
+    .checkout-card .card-body input:focus,
+    .checkout-card .card-body select:focus,
+    .checkout-card .card-body textarea:focus {
+        outline: none;
+        border-color: var(--clr-text);
+        background: var(--clr-surface);
+    }
+    .checkout-card .card-body textarea {
+        resize: vertical;
+        min-height: 90px;
+    }
+    .checkout-card .card-body ul.errorlist {
+        list-style: none;
+        margin: .3rem 0 0;
+        padding: 0;
+        color: var(--clr-accent);
+        font-size: .78rem;
+        font-weight: 600;
+    }
+
+    /* ── Buttons ──────────────────────────────────────── */
+    .btn-view {
+        display: inline-block;
+        padding: .5rem 1.1rem;
+        font-size: .8rem;
+        font-weight: 600;
+        border-radius: 8px;
+        border: 1.5px solid var(--clr-text);
+        color: var(--clr-text);
+        text-decoration: none;
+        text-align: center;
+        transition: background var(--trans), color var(--trans);
+    }
+    .btn-view:hover { background: var(--clr-text); color: #fff; }
+
+    .btn-checkout {
+        display: block;
+        width: 100%;
+        padding: .75rem;
+        margin-top: .5rem;
+        background: var(--clr-text);
+        color: #fff;
+        font-size: .9rem;
+        font-weight: 700;
+        letter-spacing: .04em;
+        border: none;
+        border-radius: 10px;
+        text-align: center;
+        cursor: pointer;
+        transition: background var(--trans);
+    }
+    .btn-checkout:hover { background: var(--clr-accent); }
+</style>
+
+{% endblock %}

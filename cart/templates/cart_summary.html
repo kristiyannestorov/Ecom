@@ -1,0 +1,429 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- Hero Header -->
+<header class="shop-hero py-5">
+    <div class="container px-4 px-lg-5 my-4">
+        <div class="text-center">
+            <span class="hero-eyebrow">Your Shopping Cart</span>
+            <h1 class="hero-title">Your Bag</h1>
+            <p class="hero-sub">Review your items before checkout</p>
+        </div>
+    </div>
+</header>
+
+<!-- Cart Content -->
+<section class="shop-section py-5">
+    <div class="container px-4 px-lg-5">
+
+        {% if cart_products %}
+        <div class="cart-layout">
+
+            <!-- Left: Product List -->
+            <div class="cart-items">
+                <div class="section-header mb-4">
+                    <h2 class="section-title">Items</h2>
+                    <span class="item-count">{{ cart_products|length }} item{{ cart_products|length|pluralize }}</span>
+                </div>
+
+                {% for product in cart_products %}
+                <div class="cart-card">
+
+                    <!-- Image -->
+                    <div class="cart-img-wrap">
+                        <img
+                            src="{{ product.image.url }}"
+                            alt="{{ product.name }}"
+                            class="cart-img"
+                        />
+                    </div>
+
+                    <!-- Details -->
+                    <div class="cart-details">
+                        <h5 class="product-name">{{ product.name }}</h5>
+
+{% for key, value in quantity.items %}
+    {% if key == product.id|slugify %}
+        <select class="form-select" id="select{{ product.id }}">
+            <option value="{{ value }}" selected>{{ value }}</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+        </select>
+    {% endif %}
+{% endfor %}
+
+                        <div class="product-stars" aria-label="5 out of 5 stars">★★★★★</div>
+
+                        <div class="product-price-row">
+                            {% if product.sale_price %}
+                                <span class="price-original">${{ product.price }}</span>
+                                <span class="price-sale">${{ product.sale_price }}</span>
+                            {% else %}
+                                <span class="price-current">${{ product.price }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                <button type="button" data-index="{{product.id}}" class="btn btn-secondary update-cart">Update</button>
+                    <button type="button" data-index="{{product.id}}" class="btn btn-danger delete-product">Remove</button>
+
+
+                    <!-- Actions -->
+                    <div class="cart-actions">
+                        <a href="{% url 'core:product' product.name %}" class="btn-view">
+                            View
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                {% endfor %}
+            </div>
+
+            <!-- Right: Order Summary -->
+            <aside class="cart-summary">
+                <h3 class="summary-title">Order Summary</h3>
+
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span>
+                        ${% with total=0 %}
+                            {% for p in cart_products %}
+                                {% if p.sale_price %}
+                                    {{ p.sale_price|add:total }}
+                                {% else %}
+                                    {{ p.price|add:total }}
+                                {% endif %}
+                            {% endfor %}
+                        {% endwith %}
+                    <div>
+                        <a href=" {% url 'check_out' %}" class="btn btn-success"></a>
+                    </div>
+                    </span>
+                </div>
+
+                <div class="summary-row">
+                    <span>Shipping</span>
+                    <span class="text-success">Free</span>
+                </div>
+
+                <div class="summary-divider"></div>
+
+                <div class="summary-row summary-total">
+                    <span>${{ totals }}</span>
+                    <span></span>
+                </div>
+
+
+            </aside>
+
+        </div>
+
+        {% else %}
+        <!-- Empty Cart -->
+        <div class="empty-state text-center py-5">
+            <div class="empty-icon">🛒</div>
+            <p class="empty-title">Your cart is empty.</p>
+            <p class="empty-sub">Looks like you haven't added anything yet.</p>
+            <a href="{% url 'core:index' %}" class="btn-checkout" style="display:inline-block; width:auto; padding: .7rem 2rem; margin-top:1rem;">
+                Start Shopping
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+    /* ── Tokens ─────────────────────────────────────── */
+    :root {
+        --clr-bg:        #F8F7F4;
+        --clr-hero-from: #1a1a2e;
+        --clr-hero-to:   #16213e;
+        --clr-accent:    #e63946;
+        --clr-surface:   #ffffff;
+        --clr-border:    #e8e8e8;
+        --clr-text:      #1c1c1e;
+        --clr-muted:     #6e6e73;
+        --clr-star:      #f4a261;
+
+        --radius-card:   14px;
+        --shadow-card:   0 2px 12px rgba(0,0,0,.07);
+        --shadow-hover:  0 8px 32px rgba(0,0,0,.14);
+        --trans:         0.22s ease;
+    }
+
+    body { background: var(--clr-bg); }
+
+    /* ── Hero ───────────────────────────────────────── */
+    .shop-hero {
+        background: linear-gradient(135deg, var(--clr-hero-from), var(--clr-hero-to));
+        border-bottom: 3px solid var(--clr-accent);
+    }
+    .hero-eyebrow {
+        display: inline-block;
+        font-size: .72rem;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,.5);
+        margin-bottom: .75rem;
+    }
+    .hero-title {
+        font-size: clamp(2rem, 5vw, 3.2rem);
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: .4rem;
+        line-height: 1.1;
+    }
+    .hero-sub {
+        color: rgba(255,255,255,.6);
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    /* ── Section header ─────────────────────────────── */
+    .section-header {
+        display: flex;
+        align-items: baseline;
+        gap: 1rem;
+        border-bottom: 2px solid var(--clr-border);
+        padding-bottom: .75rem;
+    }
+    .section-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--clr-text);
+        margin: 0;
+    }
+    .item-count {
+        font-size: .8rem;
+        color: var(--clr-muted);
+    }
+
+    /* ── Two-column layout ──────────────────────────── */
+    .cart-layout {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 2rem;
+        align-items: start;
+    }
+    @media (max-width: 900px) {
+        .cart-layout { grid-template-columns: 1fr; }
+    }
+
+    /* ── Cart row card ──────────────────────────────── */
+    .cart-card {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        background: var(--clr-surface);
+        border: 1px solid var(--clr-border);
+        border-radius: var(--radius-card);
+        box-shadow: var(--shadow-card);
+        padding: 1rem 1.2rem;
+        margin-bottom: 1rem;
+        transition: box-shadow var(--trans);
+    }
+    .cart-card:hover { box-shadow: var(--shadow-hover); }
+
+    .cart-img-wrap {
+        flex-shrink: 0;
+        width: 90px;
+        height: 90px;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #f0f0f0;
+    }
+    .cart-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .cart-details { flex: 1; min-width: 0; }
+
+    .product-name {
+        font-size: .97rem;
+        font-weight: 700;
+        color: var(--clr-text);
+        margin: 0 0 .25rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .product-stars { color: var(--clr-star); font-size: .8rem; margin-bottom: .3rem; }
+
+    .product-price-row { display: flex; gap: .5rem; align-items: center; }
+    .price-original {
+        font-size: .9rem;
+        color: var(--clr-muted);
+        text-decoration: line-through;
+    }
+    .price-sale {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--clr-accent);
+    }
+    .price-current {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--clr-text);
+    }
+
+    /* Actions */
+    .cart-actions {
+        display: flex;
+        flex-direction: column;
+        gap: .5rem;
+        flex-shrink: 0;
+    }
+    .btn-view {
+        padding: .4rem .9rem;
+        font-size: .78rem;
+        font-weight: 600;
+        border-radius: 8px;
+        border: 1.5px solid var(--clr-text);
+        color: var(--clr-text);
+        text-decoration: none;
+        text-align: center;
+        transition: background var(--trans), color var(--trans);
+    }
+    .btn-view:hover { background: var(--clr-text); color: #fff; }
+
+    .btn-remove {
+        padding: .4rem .9rem;
+        font-size: .78rem;
+        font-weight: 600;
+        border-radius: 8px;
+        border: 1.5px solid var(--clr-accent);
+        color: var(--clr-accent);
+        text-decoration: none;
+        text-align: center;
+        transition: background var(--trans), color var(--trans);
+    }
+    .btn-remove:hover { background: var(--clr-accent); color: #fff; }
+
+    /* ── Summary sidebar ────────────────────────────── */
+    .cart-summary {
+        background: var(--clr-surface);
+        border: 1px solid var(--clr-border);
+        border-radius: var(--radius-card);
+        box-shadow: var(--shadow-card);
+        padding: 1.5rem;
+        position: sticky;
+        top: 1.5rem;
+    }
+    .summary-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--clr-text);
+        margin: 0 0 1.2rem;
+    }
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: .88rem;
+        color: var(--clr-muted);
+        margin-bottom: .7rem;
+    }
+    .summary-divider {
+        border: none;
+        border-top: 1px solid var(--clr-border);
+        margin: 1rem 0;
+    }
+    .summary-total {
+        font-size: .95rem;
+        font-weight: 700;
+        color: var(--clr-text);
+        margin-bottom: 1.25rem;
+    }
+    .text-success { color: #34a853; font-weight: 600; }
+
+    .btn-checkout {
+        display: block;
+        width: 100%;
+        padding: .7rem;
+        background: var(--clr-text);
+        color: #fff;
+        font-size: .88rem;
+        font-weight: 700;
+        letter-spacing: .04em;
+        border-radius: 10px;
+        text-align: center;
+        text-decoration: none;
+        transition: background var(--trans);
+        margin-bottom: .6rem;
+    }
+    .btn-checkout:hover { background: var(--clr-accent); color: #fff; }
+
+    .btn-continue {
+        display: block;
+        text-align: center;
+        font-size: .8rem;
+        color: var(--clr-muted);
+        text-decoration: none;
+        transition: color var(--trans);
+    }
+    .btn-continue:hover { color: var(--clr-text); }
+
+    /* ── Empty state ────────────────────────────────── */
+    .empty-state { color: var(--clr-muted); }
+    .empty-icon  { font-size: 3.5rem; margin-bottom: .75rem; }
+    .empty-title { font-size: 1.2rem; font-weight: 700; color: var(--clr-text); margin-bottom: .3rem; }
+    .empty-sub   { font-size: .9rem; }
+</style>
+
+
+
+<script>
+
+
+   $(document).on('click', '.update-cart', function(e) {
+    e.preventDefault();
+    var productid = $(this).data('index');
+    var qty = $('#select' + productid).val();
+
+    $.ajax({
+        type: 'POST',
+        url: '{% url 'cart_update' %}',
+        data: {
+            product_id: productid,
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            product_qty: qty,
+            action: 'post'
+        },
+        success: function(json) {
+            location.reload();
+        },
+        error: function(xhr, errmsg, err) {
+            console.log(xhr.responseText);
+        }
+    });
+});
+
+
+
+
+   $(document).on('click', '.delete-product', function(e) {
+    e.preventDefault();
+
+    $.ajax({
+        type: 'POST',
+        url: '{% url 'cart_delete' %}',
+        data: {
+            product_id: $(this).data('index'),
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            action: 'post'
+        },
+        success: function(json) {
+            location.reload();
+        },
+        error: function(xhr, errmsg, err) {
+            console.log(xhr.responseText);
+        }
+    });
+});
+
+</script>
+{% endblock %}
