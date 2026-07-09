@@ -1,2 +1,1 @@
-web: gunicorn djangoproject1.wsgi --log-file -
-web: python manage.py migrate && gunicorn djangoproject1.wsgi --log-file -
+web: python manage.py migrate && gunicorn djangoproject1.wsgi --bind 0.0.0.0:$PORT --log-file -
