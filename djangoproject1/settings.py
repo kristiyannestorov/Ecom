@@ -151,4 +151,4 @@ STORAGES = {
     },
 }
 PAYPAL_TEST = True
-PAYPAL_RECEIVER_EMAIL = 'sb-f3ceq52037644@business.example.com'
+PAYPAL_RECEIVER_EMAIL = 'sb-dtmj051806208@business.example.com'

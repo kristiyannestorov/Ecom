@@ -150,7 +150,7 @@ def billing_info(request):
 
         host=request.get_host()
         paypal_dict={
-            'bisiness':settings.PAYPAL_RECEIVER_EMAIL,
+            'business':settings.PAYPAL_RECEIVER_EMAIL,
             'amount':totals,
             'item_name':'Book Order',
             'no_shipping':'2',
