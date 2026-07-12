@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'cloudinary_storage',
     'django.contrib.staticfiles',
+    'paypal.standard.ipn',
 
     'cart',
     'core',
@@ -149,3 +150,5 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+PAYPAL_TEST = True
+PAYPAL_RECEIVER_EMAIL = 'sb-f3ceq52037644@business.example.com'

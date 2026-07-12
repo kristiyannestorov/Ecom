@@ -8,7 +8,10 @@ from django.contrib.auth.models import  User
 from core.models import Product, Profile
 import datetime
 from django.shortcuts import get_object_or_404
-
+from django.urls import reverse
+from paypal.standard.forms import PayPalPaymentsForm
+from django.conf import settings
+import uuid
 
 
 def orders(request, pk):
@@ -145,18 +148,32 @@ def billing_info(request):
         my_shipping=request.POST
         request.session['my_shipping']=my_shipping
 
+        host=request.get_host()
+        paypal_dict={
+            'bisiness':settings.PAYPAL_RECEIVER_EMAIL,
+            'amount':totals,
+            'item_name':'Book Order',
+            'no_shipping':'2',
+            'invoice': str(uuid.uuid4()),
+            'currency_code': 'EUR',
+            'notify_url':'https://{}{}'.format(host,reverse("paypal-ipn")),
+            'return_url': 'https://{}{}'.format(host, reverse("payment_success")),
+            'cancel_return': 'https://{}{}'.format(host, reverse("payment_failed")),
+
+        }
+        paypal_form=PayPalPaymentsForm(initial=paypal_dict)
         if request.user.is_authenticated:
             billing_form=PaymentForms()
             return render(request, "payment/billing_info.html",
                           {"cart_products": cart_products, "quantity": quantity, "totals": totals,
-                           "shipping_form": request.POST,"billing_form":billing_form})
+                           "shipping_form": request.POST,"billing_form":billing_form,"paypal_form":paypal_form})
 
         else:
             billing_form = PaymentForms()
 
             return render(request, "payment/billing_info.html",
                           {"cart_products": cart_products, "quantity": quantity, "totals": totals,
-                           "shipping_form": request.POST,"billing_form":billing_form})
+                           "shipping_form": request.POST,"billing_form":billing_form,"paypal_form":paypal_form})
 
 
     else:
@@ -165,6 +182,9 @@ def billing_info(request):
 def payment_success(request):
 
     return render(request,'payment/payment_success.html',{})
+def payment_failed(request):
+
+    return render(request,'payment/payment_failed.html',{})
 
 
 def check_out(request):
