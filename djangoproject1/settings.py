@@ -29,8 +29,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['ecom-production-7ef3.up.railway.app', '127.0.0.1', 'localhost']
-CSRF_TRUSTED_ORIGINS = ['https://ecom-production-7ef3.up.railway.app']
+ALLOWED_HOSTS = ['ecom-production-7ef3.up.railway.app', '127.0.0.1', 'localhost','calcium-degrease-dissuade.ngrok-free.dev']
+CSRF_TRUSTED_ORIGINS = ['https://ecom-production-7ef3.up.railway.app','https://calcium-degrease-dissuade.ngrok-free.dev']
 
 
 # Application definition
